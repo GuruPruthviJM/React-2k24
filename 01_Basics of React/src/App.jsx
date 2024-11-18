@@ -1,3 +1,4 @@
+import Chai from "./chai"
 function App() {
   return (
     <>
@@ -18,6 +19,7 @@ function App() {
         <li>Remove-Item -Recurse -Force "folder name"</li>
       </ul>
     </p>
+    <Chai />
     </>
   )
 }
