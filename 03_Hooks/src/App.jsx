@@ -11,7 +11,19 @@ function App() {
 
   const addValue = ()=>{
     if(counter<20)
+      /* This is the interview question */
+      // if we use this multiple setCounter then also it is going to update by one value such as 15 -> 16
+      // because the fiber algorithm is going to update the UI in batch execution format so it will not update by 4 values
       setCounter(counter+1)
+      setCounter(counter+1)
+      setCounter(counter+1)
+      setCounter(counter+1)
+
+      // If we need to update four times at a single click then we need to use this method
+      // setCounter(prevCounter=>prevCounter+1)
+      // setCounter(prevCounter=>prevCounter+1)
+      // setCounter(prevCounter=>prevCounter+1)
+      // setCounter(prevCounter=>prevCounter+1)
   }
 
   const removeValue = ()=>{
