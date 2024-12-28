@@ -12,8 +12,8 @@ function App() {
   }
 
   const updateTodo = (id, todo)=>{
-    console.log(id);
-    setTodo((prev)=>prev.map((prevTodo)=>{prevTodo.id===id ? todo: prevTodo}))
+    console.log(todo);
+    setTodo((prev)=>prev.map((prevTodo)=>(prevTodo.id===id ? todo: prevTodo)))
   }
 
   const deleteTodo = (id)=>{
