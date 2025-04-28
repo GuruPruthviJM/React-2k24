@@ -1,0 +1,244 @@
+import React, { Component } from 'react';
+
+class DeploymentForm extends Component {
+  state = {
+    deploymentType: '',
+    portableStatus: '',
+    deployedBy: 'Engineer',
+    deployDate: '',
+    returnDate: '',
+    deployedByPOC: '',
+    deploymentComments: 'Site needs to be surveyed to find the type of portable asset to be deployed',
+    comments: '',
+    stageLocationSame: true,
+    customAddress: '',
+    latitude: '',
+    longitude: '',
+  };
+
+  dropdownOptions = {
+    deploymentType: ['', 'Cell Site', 'Custom Location'],
+    portableStatus: ['', 'Available', 'Asset Enroute to Staging Location'],
+    deployedBy: ['Engineer', 'Vendor'],
+    deployedByPOC: ['', 'POC1', 'POC2', 'Rogers, Benjamin'],
+  };
+
+  handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === 'deployDate' || name === 'returnDate') {
+      // Allow only digits and slashes, clamp to MM/DD/YYYY format length
+      const cleaned = value.replace(/[^0-9/]/g, '').slice(0, 10);
+      this.setState({ [name]: cleaned });
+    } else if (name === 'deploymentType' && value === 'Custom Location') {
+      this.setState({
+        deploymentType: value,
+        stageLocationSame: true,
+        customAddress: 'SOUTH - CENTRAL TEXAS - DFW CENTRAL',
+        latitude: '32.32',
+        longitude: '-96.69',
+      });
+    } else {
+      this.setState({ [name]: value });
+    }
+  };
+
+  handleCheckboxChange = (e) => {
+    const { checked } = e.target;
+    if (checked) {
+      this.setState({
+        stageLocationSame: true,
+        customAddress: 'SOUTH - CENTRAL TEXAS - DFW CENTRAL',
+        latitude: '32.32',
+        longitude: '-96.69',
+      });
+    } else {
+      this.setState({
+        stageLocationSame: false,
+        customAddress: '',
+        latitude: '',
+        longitude: '',
+      });
+    }
+  };
+
+  renderDropdown = (label, name, options = [], required = false) => (
+    <div className="mb-3">
+      <label className="form-label text-start d-block">
+        {required && <span className="text-danger">*</span>} <strong>{label}</strong>
+      </label>
+      <select
+        className="form-select"
+        name={name}
+        value={this.state[name]}
+        onChange={this.handleChange}
+      >
+        {options.map((opt, idx) => (
+          <option key={idx} value={opt}>
+            {opt || 'Select'}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+
+  renderInput = (label, name, type = 'text', required = false, disabled = false) => (
+    <div className="mb-3">
+      <label className="form-label text-start d-block">
+        {required && <span className="text-danger">*</span>} <strong>{label}</strong>
+      </label>
+      <input
+        type={type}
+        className="form-control"
+        name={name}
+        value={this.state[name]}
+        onChange={this.handleChange}
+        disabled={disabled}
+        placeholder={name === 'deployDate' || name === 'returnDate' ? 'MM/DD/YYYY' : label}
+      />
+    </div>
+  );
+
+  renderTextarea = (label, name) => (
+    <div className="mb-3">
+      <label className="form-label text-start d-block"><strong>{label}</strong></label>
+      <textarea
+        className="form-control"
+        name={name}
+        value={this.state[name]}
+        onChange={this.handleChange}
+        placeholder="Placeholder"
+        rows="2"
+      />
+    </div>
+  );
+
+  render() {
+    const { deploymentType, stageLocationSame } = this.state;
+
+    return (
+      <div className="container mt-4">
+        <form>
+          {/* Dropdowns */}
+          <div className="row">
+            <div className="col-md-4">
+              {this.renderDropdown(
+                'Deployment Type',
+                'deploymentType',
+                this.dropdownOptions.deploymentType,
+                true
+              )}
+            </div>
+            <div className="col-md-4">
+              {this.renderDropdown(
+                'Portable Status',
+                'portableStatus',
+                this.dropdownOptions.portableStatus,
+                true
+              )}
+            </div>
+            <div className="col-md-4">
+              {this.renderDropdown(
+                'Deployed By',
+                'deployedBy',
+                this.dropdownOptions.deployedBy,
+                true
+              )}
+            </div>
+          </div>
+
+          {/* Custom Location Fields */}
+          {deploymentType === 'Custom Location' && (
+            <>
+              <div
+                className="mb-3 p-3 text-start"
+                style={{ backgroundColor: '#fff9c4', borderRadius: '6px' }}
+              >
+                <div className="form-check">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="stageLocationCheckbox"
+                    checked={stageLocationSame}
+                    onChange={this.handleCheckboxChange}
+                  />
+                  <label
+                    className="form-check-label"
+                    htmlFor="stageLocationCheckbox"
+                  >
+                    Stage Location is same as address mentioned in the ticket?
+                  </label>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-8">
+                  {this.renderInput(
+                    'Custom Address',
+                    'customAddress',
+                    'text',
+                    false,
+                    stageLocationSame
+                  )}
+                </div>
+                <div className="col-md-4">
+                  {this.renderInput(
+                    'Latitude, Longitude',
+                    'latitude',
+                    'text',
+                    false,
+                    stageLocationSame
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Dates and POC */}
+          <div className="row">
+            <div className="col-md-4">
+              {this.renderInput(
+                'Deploy Date',
+                'deployDate',
+                'text',
+                true
+              )}
+            </div>
+            <div className="col-md-4">
+              {this.renderInput(
+                'Return Date',
+                'returnDate',
+                'text',
+                true
+              )}
+            </div>
+            <div className="col-md-4">
+              {this.renderDropdown(
+                'Deployed By POC',
+                'deployedByPOC',
+                this.dropdownOptions.deployedByPOC,
+                true
+              )}
+            </div>
+          </div>
+
+          {/* Comments */}
+          {this.renderTextarea('Deployment Comments', 'deploymentComments')}
+          {this.renderTextarea('Comments', 'comments')}
+
+          {/* Buttons */}
+          <div className="d-flex justify-content-center mt-4">
+            <button type="submit" className="btn btn-primary me-2">
+              Submit
+            </button>
+            <button type="button" className="btn btn-secondary">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  }
+}
+
+export default DeploymentForm;
